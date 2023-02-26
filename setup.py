@@ -13,7 +13,7 @@ requires = [
 
 setup(
     name='jmespath-community-terminal',
-    version='1.1.0',
+    version='1.1.1',
     description='JMESPath Terminal',
     long_description=io.open('README.rst', encoding='utf-8').read(),
     author='James Saryerwinnie, Springcomp',
