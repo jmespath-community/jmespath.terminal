@@ -1,0 +1,5 @@
+setuptools==67.4.0
+wheel==0.38.4
+jmespath-community>=1.1.0
+Pygments>=2.14.0,<3.0
+urwid==2.1.2

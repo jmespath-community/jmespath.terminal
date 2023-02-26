@@ -10,7 +10,7 @@ import pygments.lexers
 import collections
 
 
-__version__ = '0.2.2'
+__version__ = '1.1.0'
 
 
 SAMPLE_JSON = {
