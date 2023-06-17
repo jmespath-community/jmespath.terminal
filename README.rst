@@ -29,7 +29,7 @@ Getting Started
 
 You can install the JMESPath Terminal via pip::
 
-  $ pip install jmespath-terminal
+  $ pip install jmespath-community-terminal
 
 There will then be a ``jpterm`` program you can run::
 
