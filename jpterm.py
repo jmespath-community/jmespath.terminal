@@ -1,4 +1,5 @@
 """JMESPath text terminal."""
+import io
 import os
 import sys
 import json
@@ -187,8 +188,21 @@ def _load_input_json(filename):
     elif not os.isatty(sys.stdin.fileno()):
         # If stdin is a pipe, we need read the JSON from
         # stdin and then reset stdin this back to the controlling tty.
-        input_json = json.loads(sys.stdin.read())
-        sys.stdin = open(os.ctermid(), 'r')
+        # Replace fd(0) with tty instead of modifying sys.stdin.
+        # See https://github.com/python/cpython/issues/36029#issuecomment-1093968541 # noqa
+        buf = io.BytesIO()
+        fd = sys.stdin.fileno()
+        stdin = os.dup(fd)
+        os.close(fd)
+        os.open(os.ctermid(), os.O_RDONLY)
+        while True:
+            bs = os.read(stdin, 2**32)
+            if not bs:
+                break
+            buf.write(bs)
+        buf.seek(0)
+        input_json = json.loads(buf.read().decode())
+        buf.close()
     else:
         # If the user didn't provide a filename,
         # we want to be helpful so we'll use a sample
