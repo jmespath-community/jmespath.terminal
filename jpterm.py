@@ -157,7 +157,7 @@ class JMESPathDisplay(object):
             # the current expression current expression.
             self.input_expr.edit_text = ''
             self.jmespath_result.set_text('')
-        elif key == 'ctrl p':
+        elif key == 'ctrl o':
             new_mode = OUTPUT_MODES[
                 (OUTPUT_MODES.index(self.output_mode) + 1) % len(OUTPUT_MODES)]
             self.output_mode = new_mode
