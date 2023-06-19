@@ -63,7 +63,7 @@ modes:
 
 The default mode is "result", which means that by default, whatever is in the
 result pane will be printed to stdout when ``jpterm`` exits.  You can switch
-output modes using ``Ctrl-p``, which will cycle through the three modes above.
+output modes using ``Ctrl-o``, which will cycle through the three modes above.
 You can also specify what mode to use when starting the ``jpterm`` command
 using the ``-m/--output-mode`` command line option.
 
@@ -72,7 +72,7 @@ Keyboard Shortcuts
 
 ``F5 or Ctrl + c``
     | Quit the program.
-``Ctrl + p``
+``Ctrl + o``
     | Output mode toggle.  Toggle between outputting the current result,
     | expression, or nothing.  This is discussed in the "Output" section above.
 ``Ctrl + ]``
