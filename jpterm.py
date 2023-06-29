@@ -216,7 +216,8 @@ def main():
                         "instead direct the output to a file using "
                         "the -o/--ouput-file option.")
     parser.add_argument('--version', action='version',
-                        version='jmespath-term %s' % __version__)
+                        version='jmespath-term %s'
+                        ', community edition' % __version__)
 
     args = parser.parse_args()
     try:
