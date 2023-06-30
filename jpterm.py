@@ -181,28 +181,33 @@ class JMESPathDisplay(object):
             sys.stdout.write(result)
 
 
+def _load_json_from_pipe():
+    # If stdin is a pipe, we need read the JSON from
+    # stdin and then reset stdin this back to the controlling tty.
+    # Replace fd(0) with tty instead of modifying sys.stdin.
+    # See https://github.com/python/cpython/issues/36029#issuecomment-1093968541 # noqa
+    buf = io.BytesIO()
+    fd = sys.stdin.fileno()
+    stdin = os.dup(fd)
+    os.close(fd)
+    os.open(os.ctermid(), os.O_RDONLY)
+    while True:
+        bs = os.read(stdin, 2**32)
+        if not bs:
+            break
+        buf.write(bs)
+    buf.seek(0)
+    input_json = json.loads(buf.read().decode())
+    buf.close()
+    return input_json
+
+
 def _load_input_json(filename):
     if filename is not None:
         with open(filename) as f:
             input_json = json.load(f)
     elif not os.isatty(sys.stdin.fileno()):
-        # If stdin is a pipe, we need read the JSON from
-        # stdin and then reset stdin this back to the controlling tty.
-        # Replace fd(0) with tty instead of modifying sys.stdin.
-        # See https://github.com/python/cpython/issues/36029#issuecomment-1093968541 # noqa
-        buf = io.BytesIO()
-        fd = sys.stdin.fileno()
-        stdin = os.dup(fd)
-        os.close(fd)
-        os.open(os.ctermid(), os.O_RDONLY)
-        while True:
-            bs = os.read(stdin, 2**32)
-            if not bs:
-                break
-            buf.write(bs)
-        buf.seek(0)
-        input_json = json.loads(buf.read().decode())
-        buf.close()
+        input_json = _load_json_from_pipe()
     else:
         # If the user didn't provide a filename,
         # we want to be helpful so we'll use a sample
