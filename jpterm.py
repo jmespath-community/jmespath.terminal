@@ -166,7 +166,18 @@ class JMESPathDisplay(object):
             self.output_mode = new_mode
             self.footer.set_text("Status: output mode set to %s" % new_mode)
         elif key == "ctrl w":
-            self.input_expr.edit_text = self.del_word_pattern.sub("", self.input_expr.edit_text)
+            self._del_word_at_cursor()
+
+    def _del_word_at_cursor(self):
+        edit_text = [
+            self.input_expr.edit_text[:self.input_expr.edit_pos],
+            self.input_expr.edit_text[self.input_expr.edit_pos:]
+        ]
+        edit_text[0] = self.del_word_pattern.sub("", edit_text[0])
+        new_text = "".join(edit_text)
+        new_pos = self.input_expr.edit_pos - (len(self.input_expr.edit_text) - len(new_text))
+        self.input_expr.edit_text = new_text
+        self.input_expr.edit_pos = new_pos
 
     def display_output(self, filename):
         if self.output_mode == 'result' and \
