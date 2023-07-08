@@ -1,6 +1,7 @@
 """JMESPath text terminal."""
 import io
 import os
+import re
 import sys
 import json
 import argparse
@@ -73,6 +74,7 @@ class JMESPathDisplay(object):
         self.output_mode = output_mode
         self.last_result = None
         self.last_expression = None
+        self.del_word_pattern = re.compile(r"(\w+|[^\w\s]+)\s*$")
 
     def _create_colorized_json(self, json_string):
         tokens = self.lexer.get_tokens(json_string)
@@ -163,6 +165,8 @@ class JMESPathDisplay(object):
                 (OUTPUT_MODES.index(self.output_mode) + 1) % len(OUTPUT_MODES)]
             self.output_mode = new_mode
             self.footer.set_text("Status: output mode set to %s" % new_mode)
+        elif key == "ctrl w":
+            self.input_expr.edit_text = self.del_word_pattern.sub("", self.input_expr.edit_text)
 
     def display_output(self, filename):
         if self.output_mode == 'result' and \
