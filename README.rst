@@ -77,6 +77,8 @@ Keyboard Shortcuts
     | expression, or nothing.  This is discussed in the "Output" section above.
 ``Ctrl + ]``
     | Clear the current expression.
+``Ctrl + w``
+    | Delete the word at the cursor position from the current expression.
 
 Mouse Clicks
 ------------
