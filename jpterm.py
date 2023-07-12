@@ -177,8 +177,10 @@ class JMESPathDisplay(object):
         if filename is not None:
             with open(filename, 'w') as f:
                 f.write(result)
+                f.write("\n")
         else:
             sys.stdout.write(result)
+            sys.stdout.write("\n")
 
 
 def _load_json_from_pipe():
