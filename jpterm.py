@@ -100,8 +100,7 @@ class JMESPathDisplay(object):
         urwid.connect_signal(self.input_expr, 'change', self._on_edit)
 
         self.input_json = urwid.Text(
-            self._create_colorized_json(json.dumps(self.parsed_json,
-                                                   indent=2))
+            self._create_colorized_json(self._json_dumps(self.parsed_json))
         )
         self.input_json_list = [div, self.input_json]
         self.left_content = urwid.ListBox(self.input_json_list)
@@ -138,8 +137,11 @@ class JMESPathDisplay(object):
             if result is not None:
                 self.last_result = result
                 result_markup = self._create_colorized_json(
-                    json.dumps(result, indent=2))
+                    self._json_dumps(result))
                 self.jmespath_result.set_text(result_markup)
+
+    def _json_dumps(self, obj):
+        return json.dumps(obj, indent=2, ensure_ascii=False)
 
     def main(self, screen=None):
         self._create_view()
@@ -172,7 +174,7 @@ class JMESPathDisplay(object):
                     self.last_result, indent=None, separators=(",", ":")
                 )
             else:
-                result = json.dumps(self.last_result, indent=2)
+                result = self._json_dumps(self.last_result)
         elif self.output_mode == 'expression' and \
                 self.last_expression is not None:
             result = self.last_expression
