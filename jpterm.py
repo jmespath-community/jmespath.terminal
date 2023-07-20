@@ -143,6 +143,9 @@ class JMESPathDisplay(object):
     def _json_dumps(self, obj):
         return json.dumps(obj, indent=2, ensure_ascii=False)
 
+    def _json_dumps_compact(self, obj):
+        return json.dumps(obj, indent=None, separators=(",", ":"), ensure_ascii=False)
+
     def main(self, screen=None):
         self._create_view()
         self.loop = urwid.MainLoop(self.view, self.PALETTE,
@@ -170,9 +173,7 @@ class JMESPathDisplay(object):
     def display_output(self, filename):
         if self.output_mode == 'result' and self.last_result is not None:
             if self.compact:
-                result = json.dumps(
-                    self.last_result, indent=None, separators=(",", ":")
-                )
+                result = self._json_dumps_compact(self.last_result)
             else:
                 result = self._json_dumps(self.last_result)
         elif self.output_mode == 'expression' and \
