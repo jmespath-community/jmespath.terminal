@@ -65,7 +65,7 @@ class JMESPathDisplay(object):
         ('bigtext', 'white', 'black'),
     ]
 
-    def __init__(self, input_data, output_mode='result'):
+    def __init__(self, input_data, output_mode='result', compact=False):
         self.view = None
         self.parsed_json = input_data
         self.lexer = pygments.lexers.get_lexer_by_name('json')
@@ -73,6 +73,7 @@ class JMESPathDisplay(object):
         self.output_mode = output_mode
         self.last_result = None
         self.last_expression = None
+        self.compact = compact
 
     def _create_colorized_json(self, json_string):
         tokens = self.lexer.get_tokens(json_string)
@@ -142,6 +143,9 @@ class JMESPathDisplay(object):
     def _json_dumps(self, obj):
         return json.dumps(obj, indent=2, ensure_ascii=False)
 
+    def _json_dumps_compact(self, obj):
+        return json.dumps(obj, indent=None, separators=(",", ":"), ensure_ascii=False)
+
     def main(self, screen=None):
         self._create_view()
         self.loop = urwid.MainLoop(self.view, self.PALETTE,
@@ -167,9 +171,11 @@ class JMESPathDisplay(object):
             self.footer.set_text("Status: output mode set to %s" % new_mode)
 
     def display_output(self, filename):
-        if self.output_mode == 'result' and \
-                self.last_result is not None:
-            result = self._json_dumps(self.last_result)
+        if self.output_mode == 'result' and self.last_result is not None:
+            if self.compact:
+                result = self._json_dumps_compact(self.last_result)
+            else:
+                result = self._json_dumps(self.last_result)
         elif self.output_mode == 'expression' and \
                 self.last_expression is not None:
             result = self.last_expression
@@ -236,6 +242,9 @@ def main():
                         "to stdout when jpterm exits.  You can "
                         "instead direct the output to a file using "
                         "the -o/--ouput-file option.")
+    parser.add_argument("-c", "--compact", action="store_true",
+                        help="Produce compact JSON output that omits nonessential "
+                        "whitespace. This is ignored if output mode is not 'result'")
     parser.add_argument('--version', action='version',
                         version='jmespath-term %s'
                         ', community edition' % __version__)
@@ -248,7 +257,7 @@ def main():
         return 1
 
     screen = urwid.raw_display.Screen()
-    display = JMESPathDisplay(input_json, args.output_mode)
+    display = JMESPathDisplay(input_json, args.output_mode, compact=args.compact)
     try:
         display.main(screen=screen)
     except KeyboardInterrupt:
